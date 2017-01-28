@@ -35,7 +35,10 @@ int main()
 // introduce the game
 void PrintIntro()
 {
-	std::cout << "\n\nDobrodosli u kupusice i rodice!\n\n" << "Nakon sto unesete rec na ekranu ce se ispisati broj kupusa i broj roda.\nBroj kupusa oznacava kolicinu tacnih slova na tacnim pozicijama u reci,\na broj roda oznacava broj tacnih slova, ali na losim pozicijama.\n\n" << "Da li mozete da pogodite rec od " << BCGame.GetHiddenWordLength() << " slova koju sam zamislio u " << BCGame.GetMaxTries() << " pokusaja?\n" << std::endl;
+	std::cout << "\n\nDobrodosli u kupusice i rodice!\n\n";
+	std::cout << "Nakon sto unesete rec na ekranu ce se ispisati broj kupusa i broj roda.\nBroj kupusa oznacava kolicinu tacnih slova na tacnim pozicijama u reci,\na broj roda oznacava broj tacnih slova, ali na losim pozicijama.\n\n";
+	std::cout << "Pravila:\nUneta rec mora biti tacno " << BCGame.GetHiddenWordLength() << " slova dugacka.\nSva slova moraju biti mala.\nRec je isogram, sto znaci da nema ponovljenih slova.\n\n";
+	std::cout << "Da li mozete da pogodite rec od " << BCGame.GetHiddenWordLength() << " slova koju sam zamislio u " << BCGame.GetMaxTries() << " pokusaja?\n" << std::endl;
 	return;
 }
 
@@ -95,7 +98,7 @@ FText GetValidGuess()
 
 bool AskToPlayAgain()
 {
-	std::cout << "Do you want to play again? (y/n)";
+	std::cout << "Da li zelite da igrate ponovo sa istom recju? (y/n)";
 	FText Response = "";
 	std::getline(std::cin, Response);
 	return (Response[0] == 'y') || (Response[0] == 'Y');;
