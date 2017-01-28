@@ -12,6 +12,7 @@ using int32 = int;
 
 void PrintIntro();
 void PlayGame();
+void PrintGameSummary();
 FText GetValidGuess();
 bool AskToPlayAgain();
 
@@ -34,7 +35,7 @@ int main()
 // introduce the game
 void PrintIntro()
 {
-	std::cout << "Welcome to Bulls and Cows!\n\n" << "Can you guess the " << BCGame.GetHiddenWordLength() << " letter isogram I'm thinking of?\n" << std::endl;
+	std::cout << "\n\nDobrodosli u kupusice i rodice!\n\n" << "Nakon sto unesete rec na ekranu ce se ispisati broj kupusa i broj roda.\nBroj kupusa oznacava kolicinu tacnih slova na tacnim pozicijama u reci,\na broj roda oznacava broj tacnih slova, ali na losim pozicijama.\n\n" << "Da li mozete da pogodite rec od " << BCGame.GetHiddenWordLength() << " slova koju sam zamislio u " << BCGame.GetMaxTries() << " pokusaja?\n" << std::endl;
 	return;
 }
 
@@ -43,42 +44,45 @@ void PlayGame()
 	BCGame.Reset();
 	int32 MaxTries = BCGame.GetMaxTries();
 	
-	// loop for the number of turns asking for guesses
-	for (int32 i = 1; i <= MaxTries; i++) // TODO change from FOR to WHILE loop once we are validating tries
+	// loop for the number of turns asking for guesses while the game
+	// is NOT won and there are still tries remaining
+	while(!BCGame.IsGameWon() && BCGame.GetCurrentTry() <= MaxTries)
 	{
 		FText Guess = GetValidGuess();
 
 		// submit valid guess the game, and receive counts
 		FBullCowCount BullCowCount = BCGame.SubmitValidGuess(Guess);
 
-		std::cout << "Bulls = " << BullCowCount.Bulls;
-		std::cout << ". Cows = " << BullCowCount.Cows << "\n\n";
+		std::cout << "Kupusi = " << BullCowCount.Bulls;
+		std::cout << ". Rode = " << BullCowCount.Cows << "\n\n";
 	}
-	// TODO summarize game
+
+	PrintGameSummary();
+	return;
 }
 
 // loop continually until the user gives a valid guess
 FText GetValidGuess()
 {
-	EGuessStatus Status = EGuessStatus::Invalid_Status;
 	FText Guess = "";
+	EGuessStatus Status = EGuessStatus::Invalid_Status;
 	do {
 		// get a guess from the player
 		int32 CurrentTry = BCGame.GetCurrentTry();
-		std::cout << "Try " << CurrentTry << ". Enter your guess: ";
+		std::cout << "Pokusaj " << CurrentTry << ". Ukucajte rec: ";
 		std::getline(std::cin, Guess);
 
 		Status = BCGame.CheckGuessValidity(Guess);
 		switch (Status)
 		{
 		case EGuessStatus::Wrong_Length:
-			std::cout << "Please enter a " << BCGame.GetHiddenWordLength() << " letter word. \n";
+			std::cout << "Ukucajte rec od " << BCGame.GetHiddenWordLength() << " slova. \n";
 			break;
 		case EGuessStatus::Not_Isogram:
-			std::cout << "Please enter a word without repeating letters. \n";
+			std::cout << "Ukucajte rec u kojoj se slova ne ponavljaju. \n";
 			break;
 		case EGuessStatus::Not_Lowercase:
-			std::cout << "Please enter all lowercase letters. \n";
+			std::cout << "Ukucajte rec koja ima samo mala slova. \n";
 			break;
 		default:
 			// assume the guess is valid
@@ -96,4 +100,16 @@ bool AskToPlayAgain()
 	std::getline(std::cin, Response);
 	return (Response[0] == 'y') || (Response[0] == 'Y');;
 	std::cout << std::endl;
+}
+
+void PrintGameSummary()
+{
+	if (BCGame.IsGameWon() == true)
+	{
+		std::cout << "POBEDA!\n\n";
+	}
+	else 
+	{
+		std::cout << "Izgubili ste, vise srece sledeci put!\n\n";
+	}
 }
