@@ -1,30 +1,58 @@
+#pragma once
+
 #include "FBullCowGame.h"
 #include <map>
-#define TMap std::map
 
+// to make syntax Unreal friendly
+#define TMap std::map 
 using int32 = int;
 
-FBullCowGame::FBullCowGame()
-{
-	Reset();
+FBullCowGame::FBullCowGame() { Reset(); } // default constructor
+
+int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
+int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
+//int32 FBullCowGame::GetHCHiddenWordLength() const { return HCHiddenWord.length(); } 
+bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
+
+int32 FBullCowGame::GetMaxTries() const 
+{ 
+	TMap<int32, int32> WordLengthToMaxTries{ {3, 10}, {4, 15}, {5, 20}, {6, 25}, {7, 30} };
+//	if (MyHiddenWord.length() <= 3)
+//	{
+//		return WordLengthToMaxTries[HCHiddenWord.length()];
+//	}
+//	else
+//	{
+		return WordLengthToMaxTries[MyHiddenWord.length()];
+//	}
 }
+
+/*bool FBullCowGame::IsEnteredOrNot() const
+{
+	bool bIsEnteredOrNot;
+	if (MyHiddenWord.length() < 3)
+	{
+		bIsEnteredOrNot = false;
+	}
+	else
+	{
+		bIsEnteredOrNot = true;
+	}
+	return bIsEnteredOrNot; 
+}*/ // TODO
 
 void FBullCowGame::Reset()
 {
-	constexpr int32 MAX_TRIES = 10;
-	const FString HIDDEN_WORD = "beograd";
-
-	MyMaxTries = MAX_TRIES;
+	//constexpr int32 MAX_TRIES = 25;
+	const FString HIDDEN_WORD = "plugovi"; // this is useful if we don't want to allow another player to set the word // this MUST be an isogram
+	//FString HiddenWord;
+	//MyMaxTries = MAX_TRIES; // no need for this anymore since it is mapped above in the getter for max tries function
 	MyHiddenWord = HIDDEN_WORD;
+	//HCHiddenWord = HIDDEN_WORD;
 	MyCurrentTry = 1;
 	bGameIsWon = false;
 	return;
 }
-
-int32 FBullCowGame::GetMaxTries() const { return MyMaxTries; }
-int32 FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
-int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
-bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
 
 EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 {
@@ -36,10 +64,14 @@ EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const
 	{
 		return EGuessStatus::Not_Lowercase; //TODO write function
 	}
-	else if (Guess.length() != GetHiddenWordLength()) // if the guess length is wrong
+	else if (/*IsEnteredOrNot() == true && */Guess.length() != GetHiddenWordLength()) // if the guess length is wrong // here I must put a function that returns true or false depending on wether the player entered the word or not
 	{
 		return EGuessStatus::Wrong_Length;
 	}
+	/*else if (IsEnteredOrNot() == false && Guess.length() != GetHCHiddenWordLength())
+	{
+		return EGuessStatus::Wrong_Length;
+	}*/
 	else
 	{
 		return EGuessStatus::OK;
